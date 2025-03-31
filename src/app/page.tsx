@@ -1,9 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronRight, File, Folder, MoreVertical, Plus, Upload } from "lucide-react"
-import { Button } from "~/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu"
+import { useState } from "react";
+import {
+  ChevronRight,
+  File,
+  Folder,
+  MoreVertical,
+  Plus,
+  Upload,
+} from "lucide-react";
+import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
 // Mock data structure
 const initialData = {
@@ -80,65 +92,73 @@ const initialData = {
     size: "8.1 MB",
     modified: "Oct 22, 2022",
   },
-}
+};
 
 export default function GoogleDriveUI() {
-  const [currentFolder, setCurrentFolder] = useState("root")
-  const [breadcrumbs, setBreadcrumbs] = useState([{ id: "root", name: "My Drive" }])
+  const [currentFolder, setCurrentFolder] = useState("root");
+  const [breadcrumbs, setBreadcrumbs] = useState([
+    { id: "root", name: "My Drive" },
+  ]);
 
   // Navigate to a folder
   const navigateToFolder = (folderId: string, folderName: string) => {
-    setCurrentFolder(folderId)
+    setCurrentFolder(folderId);
 
     // Find the index of the folder in breadcrumbs if it exists
-    const existingIndex = breadcrumbs.findIndex((crumb) => crumb.id === folderId)
+    const existingIndex = breadcrumbs.findIndex(
+      (crumb) => crumb.id === folderId,
+    );
 
     if (existingIndex !== -1) {
       // If folder exists in breadcrumbs, truncate the array to that point
-      setBreadcrumbs(breadcrumbs.slice(0, existingIndex + 1))
+      setBreadcrumbs(breadcrumbs.slice(0, existingIndex + 1));
     } else {
       // Otherwise add the new folder to breadcrumbs
-      setBreadcrumbs([...breadcrumbs, { id: folderId, name: folderName }])
+      setBreadcrumbs([...breadcrumbs, { id: folderId, name: folderName }]);
     }
-  }
+  };
 
   // Get current folder's children
   const getCurrentFolderContents = () => {
-    const folder = initialData[currentFolder as keyof typeof initialData] as any
-    if (!folder || !folder.children) return []
+    const folder = initialData[
+      currentFolder as keyof typeof initialData
+    ] as any;
+    if (!folder || !folder.children) return [];
 
-    return folder.children.map((childId) => {
-      const item = initialData[childId as keyof typeof initialData] as any
-      return item
-    })
-  }
+    return folder.children.map((childId: any) => {
+      const item = initialData[childId as keyof typeof initialData] as any;
+      return item;
+    });
+  };
 
   // Mock file download/open
   const openFile = (fileId: string) => {
-    const file = initialData[fileId as keyof typeof initialData] as any
-    alert(`Opening file: ${file.name}`)
+    const file = initialData[fileId as keyof typeof initialData] as any;
+    alert(`Opening file: ${file.name}`);
     // In a real app, this would redirect to the file or download it
-  }
+  };
 
   // Mock upload functionality
   const handleUpload = () => {
-    alert("Upload functionality would open a file picker here")
-  }
+    alert("Upload functionality would open a file picker here");
+  };
 
-  const folderContents = getCurrentFolderContents()
+  const folderContents = getCurrentFolderContents();
 
   return (
-    <div className="min-h-screen bg-background text-foreground dark">
-      <div className="container mx-auto p-4 max-w-6xl">
+    <div className="bg-background text-foreground dark min-h-screen">
+      <div className="container mx-auto max-w-6xl p-4">
         {/* Header with breadcrumbs and upload button */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center space-x-1">
             {breadcrumbs.map((crumb, index) => (
               <div key={crumb.id} className="flex items-center">
-                {index > 0 && <ChevronRight className="h-4 w-4 mx-1 text-muted-foreground" />}
+                {index > 0 && (
+                  <ChevronRight className="text-muted-foreground mx-1 h-4 w-4" />
+                )}
                 <button
                   onClick={() => navigateToFolder(crumb.id, crumb.name)}
-                  className="hover:underline text-sm font-medium"
+                  className="text-sm font-medium hover:underline"
                 >
                   {crumb.name}
                 </button>
@@ -148,18 +168,18 @@ export default function GoogleDriveUI() {
 
           <div className="flex space-x-2">
             <Button onClick={handleUpload} variant="outline" size="sm">
-              <Upload className="h-4 w-4 mr-2" />
+              <Upload className="mr-2 h-4 w-4" />
               Upload
             </Button>
             <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               New
             </Button>
           </div>
         </div>
 
         {/* File list header */}
-        <div className="grid grid-cols-12 py-2 border-b border-border text-sm font-medium text-muted-foreground">
+        <div className="border-border text-muted-foreground grid grid-cols-12 border-b py-2 text-sm font-medium">
           <div className="col-span-6">Name</div>
           <div className="col-span-3">Last Modified</div>
           <div className="col-span-2">Size</div>
@@ -167,25 +187,38 @@ export default function GoogleDriveUI() {
         </div>
 
         {/* File and folder list */}
-        <div className="divide-y divide-border">
+        <div className="divide-border divide-y">
           {folderContents.length > 0 ? (
             folderContents.map((item: any) => (
-              <div key={item.id} className="grid grid-cols-12 py-3 items-center hover:bg-muted/50 rounded-md px-2">
+              <div
+                key={item.id}
+                className="hover:bg-muted/50 grid grid-cols-12 items-center rounded-md px-2 py-3"
+              >
                 <div className="col-span-6 flex items-center">
                   {item.type === "folder" ? (
-                    <button onClick={() => navigateToFolder(item.id, item.name)} className="flex items-center">
-                      <Folder className="h-5 w-5 mr-3 text-blue-500" />
+                    <button
+                      onClick={() => navigateToFolder(item.id, item.name)}
+                      className="flex items-center"
+                    >
+                      <Folder className="mr-3 h-5 w-5 text-blue-500" />
                       <span>{item.name}</span>
                     </button>
                   ) : (
-                    <button onClick={() => openFile(item.id)} className="flex items-center">
-                      <File className="h-5 w-5 mr-3 text-gray-500" />
+                    <button
+                      onClick={() => openFile(item.id)}
+                      className="flex items-center"
+                    >
+                      <File className="mr-3 h-5 w-5 text-gray-500" />
                       <span>{item.name}</span>
                     </button>
                   )}
                 </div>
-                <div className="col-span-3 text-sm text-muted-foreground">{item.modified || "—"}</div>
-                <div className="col-span-2 text-sm text-muted-foreground">{item.size || "—"}</div>
+                <div className="text-muted-foreground col-span-3 text-sm">
+                  {item.modified || "—"}
+                </div>
+                <div className="text-muted-foreground col-span-2 text-sm">
+                  {item.size || "—"}
+                </div>
                 <div className="col-span-1 flex justify-end">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -198,18 +231,21 @@ export default function GoogleDriveUI() {
                       <DropdownMenuItem>Rename</DropdownMenuItem>
                       <DropdownMenuItem>Move</DropdownMenuItem>
                       <DropdownMenuItem>Share</DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive">
+                        Delete
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
               </div>
             ))
           ) : (
-            <div className="py-8 text-center text-muted-foreground">This folder is empty</div>
+            <div className="text-muted-foreground py-8 text-center">
+              This folder is empty
+            </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }
-
